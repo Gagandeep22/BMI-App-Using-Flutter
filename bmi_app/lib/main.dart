@@ -1,8 +1,11 @@
 import 'dart:math';
 
+import 'package:bmi_app/screen_login.dart';
 import 'package:bmi_app/screen_splash.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,14 +42,12 @@ class _MyHomePageState extends State<MyHomePage> {
   var result = "";
 
   calculateBMI() {
-
-
     var intWeight = controllerWeight.text.toString();
     var intHeightFt = controllerHeightFt.text.toString();
     var intHeightIn = controllerHeightIn.text.toString();
 
-    if (intWeight!="" && intHeightFt!="" && intHeightIn!="") {
-      var totalHeightIn = int.parse(intHeightFt)*12 + int.parse(intHeightIn);
+    if (intWeight != "" && intHeightFt != "" && intHeightIn != "") {
+      var totalHeightIn = int.parse(intHeightFt) * 12 + int.parse(intHeightIn);
       var totalHeightCm = totalHeightIn * 2.54;
       var totalHeightM = totalHeightCm / 100;
 
@@ -61,15 +62,12 @@ class _MyHomePageState extends State<MyHomePage> {
         result = "You're Healthy! Your BMI is ${bmi.toStringAsFixed(2)}";
       }
 
-      setState(() {
-
-      });
+      setState(() {});
     } else {
       setState(() {
         result = "Please fill all the fields to calculate!!!";
       });
     }
-
   }
 
   @override
@@ -77,13 +75,32 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          'Know your BMI',
-          style: GoogleFonts.ubuntu(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Know Your BMI',
+              style: GoogleFonts.ubuntu(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+            InkWell(
+              onTap: () async {
+                var prefslog = await SharedPreferences.getInstance();
+                prefslog.setBool("Login", false);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => screen_login()),
+                );
+              },
+              child: FaIcon(
+                FontAwesomeIcons.powerOff,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+          ],
         ),
       ),
       body: Container(
@@ -100,7 +117,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: <TextSpan>[
                       TextSpan(
                         text: 'B',
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary,),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                       TextSpan(
                         text: 'ody ',
@@ -108,7 +127,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       TextSpan(
                         text: 'M',
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary,),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                       TextSpan(
                         text: 'ass ',
@@ -116,7 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       TextSpan(
                         text: 'I',
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary,),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                       TextSpan(
                         text: 'ndex',
@@ -160,16 +183,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(height: 80),
                 ElevatedButton(
-                    onPressed: () => calculateBMI(),
-                    child: Text(
-                        'Calculate BMI',
-                      style: GoogleFonts.signikaNegative(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  onPressed: () => calculateBMI(),
+                  child: Text(
+                    'Calculate BMI',
+                    style: GoogleFonts.signikaNegative(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
                 ),
-                SizedBox(height: 25,),
+                SizedBox(height: 25),
                 Text(
                   result,
                   style: GoogleFonts.signikaNegative(
